@@ -1,14 +1,20 @@
 
+function zeroPadding(s, n){
+    let a = new Array(n).join('0');
+    return (a + s).substr(-n);
+}
+
 export default class DateUtils {
-	static getTime(value){
+	static val(value){
 		let v = value;
 		if(v == null){v = Date.now();}
-		return new Date(v).getTime();
+		return v;
+	}
+	static getTime(value){
+		return new Date(DateUtils.val(value)).getTime();
 	}
 	static getUtcTime(value){
-		let v = value;
-		if(v == null){v = Date.now();}
-		let t = new Date(v);
+		let t = new Date(DateUtils.val(value));
 		let y = t.getUTCFullYear();
 		let m = t.getUTCMonth();
 		let d = t.getUTCDate();
@@ -17,6 +23,23 @@ export default class DateUtils {
 		let s = t.getUTCSeconds();
 		let a = t.getUTCMilliseconds();
 		return new Date(y, m, d, h, i, s, a).getTime();
+	}
+	static getTimeString(value, noneSecond){
+		let t = new Date(DateUtils.val(value));
+		let y = t.getFullYear();
+		let m = zeroPadding(t.getMonth() + 1, 2);
+		let d = zeroPadding(t.getDate(), 2);
+		let h = zeroPadding(t.getHours(), 2);
+		let i = zeroPadding(t.getMinutes(), 2);
+		let s = zeroPadding(t.getSeconds(), 2);
+		let r = y + '.' + m + '.' + d + ' - ' + h + ':' + i;
+		if(noneSecond){return r;}
+		return r + ':' + s;
+	}
+	static getUtcTimeString(value, noneSecond){
+		let t = DateUtils.getTime(value);
+		let o = new Date().getTimezoneOffset() * 60000;
+		return DateUtils.getTimeString(t - o, noneSecond);
 	}
 }
 
